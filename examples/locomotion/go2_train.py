@@ -153,10 +153,22 @@ def main():
     os.makedirs(log_dir, exist_ok=True)
 
     env = Go2Env(
-        num_envs=args.num_envs, env_cfg=env_cfg, obs_cfg=obs_cfg, reward_cfg=reward_cfg, command_cfg=command_cfg
+        num_envs=args.num_envs,
+        env_cfg=env_cfg,
+        obs_cfg=obs_cfg,
+        reward_cfg=reward_cfg,
+        command_cfg=command_cfg,
+        # device="cuda:0",
+        device="mps",
     )
 
-    runner = OnPolicyRunner(env, train_cfg, log_dir, device="cuda:0")
+    runner = OnPolicyRunner(
+        env,
+        train_cfg,
+        log_dir,
+        # device="cuda:0",
+        device="mps",
+    )
 
     pickle.dump(
         [env_cfg, obs_cfg, reward_cfg, command_cfg, train_cfg],
@@ -171,5 +183,5 @@ if __name__ == "__main__":
 
 """
 # training
-python examples/locomotion/go2_train.py
+python examples/locomotion/go2_train.py -e go2-walking -B 4000 --max_iterations 500
 """
