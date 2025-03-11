@@ -109,6 +109,7 @@ class BackflipEnv(Go2Env):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-e", "--exp_name", type=str, default="single")
+    parser.add_argument("-v", "--vis", action="store_true", default=False)
     args = parser.parse_args()
 
     gs.init()
@@ -128,17 +129,38 @@ def main():
         obs_cfg=obs_cfg,
         reward_cfg=reward_cfg,
         command_cfg=command_cfg,
+        device="mps",
         show_viewer=True,
     )
 
-    policy = torch.jit.load(f"./backflip/{args.exp_name}.pt")
-    policy.to(device="cuda:0")
+    policy = torch.jit.load(f"./examples/locomotion/backflip/{args.exp_name}.pt")
+    policy.to(device="mps")
 
+    gs.tools.run_in_another_thread(fn=run_sim, args=(env, policy, args.vis))
+    if args.vis:
+        env.scene.viewer.start()
+
+    # obs, _ = env.reset()
+    # with torch.no_grad():
+    #     while True:
+    #         actions = policy(obs)
+    #         obs, _, rews, dones, infos = env.step(actions)
+
+
+def run_sim(env, policy, enable_vis):
     obs, _ = env.reset()
     with torch.no_grad():
+        i = 0
         while True:
             actions = policy(obs)
             obs, _, rews, dones, infos = env.step(actions)
+
+            i += 1
+            if i > 50 * 100:
+                break
+
+    if enable_vis:
+        env.scene.viewer.stop()
 
 
 if __name__ == "__main__":
