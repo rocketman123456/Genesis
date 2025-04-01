@@ -312,7 +312,7 @@ class FileMorph(Morph):
         This parameter is deprecated. Please refers to 'convexify' and 'decompose_error_threshold' instead.
     decompose_error_threshold : bool, optional:
         Skip decompose if the relative difference between the volume of original mesh and its convex hull is lower than
-        this threashold. 0.0 to enforce decomposition, float("inf") to disable it completly. Defaults to 0.2 (20%).
+        this threashold. 0.0 to enforce decomposition, float("inf") to disable it completly. Defaults to 0.15 (15%).
     coacd_options : CoacdOptions, optional
         Options for configuring coacd convex decomposition. Needs to be a `gs.options.CoacdOptions` object.
     visualization : bool, optional
@@ -329,7 +329,7 @@ class FileMorph(Morph):
     decimate_face_num: int = 500
     convexify: bool = True
     decompose_nonconvex: Optional[bool] = None
-    decompose_error_threshold: float = 0.2
+    decompose_error_threshold: float = 0.15
     coacd_options: Optional[CoacdOptions] = None
     recompute_inertia: bool = False
 
@@ -346,6 +346,9 @@ class FileMorph(Morph):
             gs.warning(
                 "`decompose_nonconvex` is deprecated. Please use 'convexify' and 'decompose_error_threshold' instead."
             )
+
+        # Make sure that this threshold is positive to avoid decomposition of convex and primivie shapes
+        self.decompose_error_threshold = max(self.decompose_error_threshold, gs.EPS)
 
         if self.decimate and self.decimate_face_num < 100:
             gs.raise_exception(
@@ -411,7 +414,7 @@ class Mesh(FileMorph):
         This parameter is deprecated. Please refers to 'convexify' and 'decompose_error_threshold' instead.
     decompose_error_threshold : bool, optional:
         Skip decompose if the relative difference between the volume of original mesh and its convex hull is lower than
-        this threashold. 0.0 to enforce decomposition, float("inf") to disable it completly. Defaults to 0.2 (20%).
+        this threashold. 0.0 to enforce decomposition, float("inf") to disable it completly. Defaults to 0.15 (15%).
     coacd_options : CoacdOptions, optional
         Options for configuring coacd convex decomposition. Needs to be a `gs.options.CoacdOptions` object.
     merge_submeshes_for_collision : bool, optional
@@ -510,7 +513,7 @@ class MJCF(FileMorph):
         This parameter is deprecated. Please refers to 'convexify' and 'decompose_error_threshold' instead.
     decompose_error_threshold : bool, optional:
         Skip decompose if the relative difference between the volume of original mesh and its convex hull is lower than
-        this threashold. 0.0 to enforce decomposition, float("inf") to disable it completly. Defaults to 0.2 (20%).
+        this threashold. 0.0 to enforce decomposition, float("inf") to disable it completly. Defaults to 0.15 (15%).
     coacd_options : CoacdOptions, optional
         Options for configuring coacd convex decomposition. Needs to be a `gs.options.CoacdOptions` object.
     visualization : bool, optional
@@ -568,7 +571,7 @@ class URDF(FileMorph):
         This parameter is deprecated. Please refers to 'convexify' and 'decompose_error_threshold' instead.
     decompose_error_threshold : bool, optional:
         Skip decompose if the relative difference between the volume of original mesh and its convex hull is lower than
-        this threashold. 0.0 to enforce decomposition, float("inf") to disable it completly. Defaults to 0.2 (20%).
+        this threashold. 0.0 to enforce decomposition, float("inf") to disable it completly. Defaults to 0.15 (15%).
     coacd_options : CoacdOptions, optional
         Options for configuring coacd convex decomposition. Needs to be a `gs.options.CoacdOptions` object.
     visualization : bool, optional
@@ -633,7 +636,7 @@ class Drone(FileMorph):
         This parameter is deprecated. Please refers to 'convexify' and 'decompose_error_threshold' instead.
     decompose_error_threshold : bool, optional:
         Skip decompose if the relative difference between the volume of original mesh and its convex hull is lower than
-        this threashold. 0.0 to enforce decomposition, float("inf") to disable it completly. Defaults to 0.2 (20%).
+        this threashold. 0.0 to enforce decomposition, float("inf") to disable it completly. Defaults to 0.15 (15%).
     coacd_options : CoacdOptions, optional
         Options for configuring coacd convex decomposition. Needs to be a `gs.options.CoacdOptions` object.
     visualization : bool, optional
